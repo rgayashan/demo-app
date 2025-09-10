@@ -1,7 +1,10 @@
-import React from 'react';
-import { Search, Bell, HelpCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, Bell, HelpCircle, LogOut, User } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+import { useAuth } from '../../hooks/useAuth';
+import { RoleGuard } from '../auth/RoleGuard';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -25,6 +28,9 @@ interface DashboardLayoutProps {
  * @param {React.ReactNode} children - The content to render inside the main content area.
  */
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+  const { user, logout } = useAuth();
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -52,6 +58,54 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
                 placeholder="Search..."
                 className="pl-10 w-full sm:w-80 bg-gray-50 border-gray-200 focus:bg-white"
               />
+            </div>
+            
+            {/* User info and logout */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <User className="h-4 w-4" />
+                <span className="hidden sm:inline">{user?.name}</span>
+                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                  {user?.role}
+                </span>
+              </div>
+              <Dialog open={isLogoutOpen} onOpenChange={setIsLogoutOpen}>
+                <DialogTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-gray-600 hover:text-red-600"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span className="hidden sm:inline ml-1">Logout</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Confirm Logout</DialogTitle>
+                    <DialogDescription>
+                      Are you sure you want to log out?
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <Button 
+                      variant="outline"
+                      onClick={() => setIsLogoutOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      variant="destructive"
+                      onClick={() => {
+                        logout();
+                        setIsLogoutOpen(false);
+                      }}
+                    >
+                      Logout
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
             
             {/* Desktop icons - only show on desktop */}

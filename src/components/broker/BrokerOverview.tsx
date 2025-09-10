@@ -7,6 +7,7 @@ import { PhoneCall, Mail, MessageCircle } from 'lucide-react';
 import { apiService } from '../../services/api';
 import { useAppStore } from '../../store/appStore';
 import { BrokerInfo } from '../../types';
+import { RoleGuard, PermissionGuard } from '../auth/RoleGuard';
 
 /**
  * BrokerOverview component
@@ -82,21 +83,23 @@ export const BrokerOverview: React.FC = () => {
               </div>
             </div>
 
-            {/* Contact Buttons */}
-            <div className="flex flex-col sm:flex-row gap-2">
-              <Button size="sm" variant="outline" className="flex-1 button-press hover-glow animate-stagger-4 text-xs sm:text-sm">
-                <PhoneCall className="h-4 w-4 mr-1" />
-                Call
-              </Button>
-              <Button size="sm" variant="outline" className="flex-1 button-press hover-glow animate-stagger-4 text-xs sm:text-sm">
-                <Mail className="h-4 w-4 mr-1" />
-                Email
-              </Button>
-              <Button size="sm" variant="outline" className="flex-1 button-press hover-glow animate-stagger-4 text-xs sm:text-sm">
-                <MessageCircle className="h-4 w-4 mr-1" />
-                Chat
-              </Button>
-            </div>
+            {/* Contact Buttons - Only visible to brokers and admins */}
+            <RoleGuard roles={['broker', 'admin']}>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button size="sm" variant="outline" className="flex-1 button-press hover-glow animate-stagger-4 text-xs sm:text-sm">
+                  <PhoneCall className="h-4 w-4 mr-1" />
+                  Call
+                </Button>
+                <Button size="sm" variant="outline" className="flex-1 button-press hover-glow animate-stagger-4 text-xs sm:text-sm">
+                  <Mail className="h-4 w-4 mr-1" />
+                  Email
+                </Button>
+                <Button size="sm" variant="outline" className="flex-1 button-press hover-glow animate-stagger-4 text-xs sm:text-sm">
+                  <MessageCircle className="h-4 w-4 mr-1" />
+                  Chat
+                </Button>
+              </div>
+            </RoleGuard>
           </div>
         )}
 

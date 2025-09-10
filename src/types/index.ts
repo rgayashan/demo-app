@@ -36,3 +36,29 @@ export interface WorkflowStep {
 }
 
 export type TabType = 'new' | 'in_review' | 'approved';
+
+// Authentication types
+export type UserRole = 'broker' | 'admin' | 'viewer';
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  permissions: string[];
+}
+
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
+}
+
+export interface AuthContextType extends AuthState {
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => void;
+  hasPermission: (permission: string) => boolean;
+  hasRole: (role: UserRole) => boolean;
+  hasAnyRole: (roles: UserRole[]) => boolean;
+}

@@ -12,6 +12,7 @@ A modern, responsive React application for managing borrower pipelines and loan 
 - [Project Structure](#-project-structure)
 - [Key Components](#-key-components)
 - [State Management](#-state-management)
+- [Access Control](#-access-control)
 - [Styling & Animations](#-styling--animations)
 - [Mobile Responsiveness](#-mobile-responsiveness)
 - [Testing](#-testing)
@@ -228,6 +229,51 @@ interface AppStore {
 3. **Server State**: API data with loading and error states
 4. **Derived State**: Computed values from other state
 
+## 🔐 Access Control
+
+The app includes a role-based access control (RBAC) system with authentication, route protection, and component-level guards.
+
+### Overview
+- **Authentication**: Login/logout with session persistence
+- **Roles**: `broker`, `admin`, `viewer`
+- **Permissions** (examples): `request_documents`, `send_to_valuer`, `approve_loans`, `manage_users`
+
+### Demo Credentials
+- **Broker**: `broker@demo.com` / `demo123`
+- **Admin**: `admin@demo.com` / `demo123`
+- **Viewer**: `viewer@demo.com` / `demo123`
+
+### Key Files
+- `src/contexts/AuthContext.tsx`: Auth provider and session handling
+- `src/hooks/useAuth.ts`: Hooks for roles/permissions access
+- `src/components/auth/ProtectedRoute.tsx`: Route protection component
+- `src/components/auth/RoleGuard.tsx`: `RoleGuard` and `PermissionGuard`
+- `src/components/auth/LoginForm.tsx`: Demo login UI
+
+### Usage
+Protect a view (authentication required):
+```tsx
+<ProtectedRoute>
+  <Dashboard />
+ </ProtectedRoute>
+```
+
+Require specific roles:
+```tsx
+<ProtectedRoute requiredRoles={['admin', 'broker']}>
+  <AdminPanel />
+</ProtectedRoute>
+```
+
+Conditionally render by permissions:
+```tsx
+<PermissionGuard permissions={['approve_loans']}>
+  <ApproveButton />
+</PermissionGuard>
+```
+
+For full details, see `ACCESS_CONTROL.md`.
+
 ## 🎨 Styling & Animations
 
 ### Tailwind CSS
@@ -326,7 +372,7 @@ npm test -- --watch        # Watch mode
 - [ ] **Real-time Updates**: WebSocket integration for live data
 - [ ] **Advanced Filtering**: Search and filter capabilities
 - [ ] **Data Export**: PDF and Excel export functionality
-- [ ] **User Authentication**: Login and role-based access
+- [ ] **Advanced Authentication**: SSO/MFA and hardened session security
 - [ ] **Dark Mode**: Theme switching capability
 - [ ] **PWA Support**: Progressive Web App features
 

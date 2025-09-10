@@ -7,6 +7,8 @@ import { Alert, AlertDescription } from '../ui/alert';
 import { AlertTriangle, FileText, Users, CheckCircle, PhoneCall, Mail } from 'lucide-react';
 import { useAppStore } from '../../store/appStore';
 import { apiService } from '../../services/api';
+import { useAccessControl } from '../../hooks/useAuth';
+import { RoleGuard, PermissionGuard } from '../auth/RoleGuard';
 
 /**
  * A component that displays detailed information about a borrower.
@@ -119,43 +121,49 @@ export const BorrowerDetails: React.FC = () => {
                 ))}
                 
                 <div className="flex flex-col sm:flex-row gap-2 pt-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleAction('Request Documents', () =>
-                      apiService.requestDocuments(activeBorrower.id)
-                    )}
-                    disabled={loading === 'Request Documents'}
-                    className="flex items-center gap-1 button-press hover-glow text-xs sm:text-sm"
-                  >
-                    <FileText className="h-4 w-4" />
-                    {loading === 'Request Documents' ? 'Requesting...' : 'Request Documents'}
-                  </Button>
+                  <PermissionGuard permissions={['request_documents']}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleAction('Request Documents', () =>
+                        apiService.requestDocuments(activeBorrower.id)
+                      )}
+                      disabled={loading === 'Request Documents'}
+                      className="flex items-center gap-1 button-press hover-glow text-xs sm:text-sm"
+                    >
+                      <FileText className="h-4 w-4" />
+                      {loading === 'Request Documents' ? 'Requesting...' : 'Request Documents'}
+                    </Button>
+                  </PermissionGuard>
                   
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleAction('Send to Valuer', () =>
-                      apiService.sendToValuer(activeBorrower.id)
-                    )}
-                    disabled={loading === 'Send to Valuer'}
-                    className="flex items-center gap-1 button-press hover-glow text-xs sm:text-sm"
-                  >
-                    <Users className="h-4 w-4" />
-                    {loading === 'Send to Valuer' ? 'Sending...' : 'Send to Valuer'}
-                  </Button>
+                  <PermissionGuard permissions={['send_to_valuer']}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleAction('Send to Valuer', () =>
+                        apiService.sendToValuer(activeBorrower.id)
+                      )}
+                      disabled={loading === 'Send to Valuer'}
+                      className="flex items-center gap-1 button-press hover-glow text-xs sm:text-sm"
+                    >
+                      <Users className="h-4 w-4" />
+                      {loading === 'Send to Valuer' ? 'Sending...' : 'Send to Valuer'}
+                    </Button>
+                  </PermissionGuard>
                   
-                  <Button
-                    size="sm"
-                    onClick={() => handleAction('Approve', () =>
-                      apiService.approveLoan(activeBorrower.id)
-                    )}
-                    disabled={loading === 'Approve'}
-                    className="flex items-center gap-1 button-press hover-glow text-xs sm:text-sm"
-                  >
-                    <CheckCircle className="h-4 w-4" />
-                    {loading === 'Approve' ? 'Approving...' : 'Approve'}
-                  </Button>
+                  <PermissionGuard permissions={['approve_loans']}>
+                    <Button
+                      size="sm"
+                      onClick={() => handleAction('Approve', () =>
+                        apiService.approveLoan(activeBorrower.id)
+                      )}
+                      disabled={loading === 'Approve'}
+                      className="flex items-center gap-1 button-press hover-glow text-xs sm:text-sm"
+                    >
+                      <CheckCircle className="h-4 w-4" />
+                      {loading === 'Approve' ? 'Approving...' : 'Approve'}
+                    </Button>
+                  </PermissionGuard>
                 </div>
               </div>
             </AccordionContent>

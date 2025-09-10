@@ -3,6 +3,7 @@ import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { BorrowerPipeline } from '../components/borrower/BorrowerPipeline';
 import { BorrowerDetails } from '../components/borrower/BorrowerDetails';
 import { BrokerOverview } from '../components/broker/BrokerOverview';
+import { AccessControlDemo } from '../components/auth/AccessControlDemo';
 
 /**
  * The main dashboard page.
@@ -26,6 +27,7 @@ export const Dashboard: React.FC = () => {
       <BorrowerPipeline />
       <BorrowerDetails />
       <BrokerOverview />
+      <AccessControlDemo />
     </DashboardLayout>
   );
 };
