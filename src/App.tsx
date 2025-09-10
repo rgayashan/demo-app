@@ -1,24 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import { Dashboard } from './pages/Dashboard';
+import './index.css';
+import { SplashScreen } from './components/SplashScreen';
 
 function App() {
+  const [showSplash, setShowSplash] = useState(true);
+  const [showDashboard, setShowDashboard] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+      setShowDashboard(true);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {showSplash && <SplashScreen />}
+      {showDashboard && (
+        <div className="page-enter page-enter-active">
+          <Dashboard />
+        </div>
+      )}
     </div>
   );
 }
