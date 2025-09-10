@@ -20,7 +20,7 @@ A modern, responsive React application for managing borrower pipelines and loan 
 - [Future Enhancements](#-future-enhancements)
 
 ## ✨ Features
-◊
+
 ### 🎯 Core Functionality
 - **Borrower Pipeline Management**: View and manage borrowers across different stages (New, In Review, Approved)
 - **Interactive Dashboard**: Real-time data visualization with animated components
@@ -103,12 +103,6 @@ src/
 - ✅ **Color Contrast**: WCAG compliant color schemes
 - ✅ **Focus Management**: Clear focus indicators
 
-### Security
-- ✅ **Input Validation**: Client-side validation
-- ✅ **XSS Prevention**: Sanitized user inputs
-- ✅ **Environment Variables**: Secure configuration management
-- ✅ **HTTPS Ready**: Production-ready security headers
-
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -119,7 +113,7 @@ src/
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/rgayashan/demo-app.git
    cd demo-app
    ```
 
@@ -147,11 +141,6 @@ src/
 npm start          # Start development server
 npm test           # Run test suite
 npm run build      # Build for production
-npm run eject      # Eject from Create React App
-
-# Code Quality
-npm run lint       # Run ESLint
-npm run format     # Format code with Prettier
 ```
 
 ## 📁 Project Structure
@@ -342,8 +331,6 @@ src/__tests__/
 ### Test Commands
 ```bash
 npm test                    # Run all tests
-npm test -- --coverage     # Run with coverage
-npm test -- --watch        # Watch mode
 ```
 
 ## ⚡ Performance Optimizations

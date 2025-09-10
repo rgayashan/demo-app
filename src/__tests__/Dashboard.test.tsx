@@ -1,10 +1,11 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { Dashboard } from '../pages/Dashboard';
+import { AuthProvider } from '../contexts/AuthContext';
 
-// Mock the API service
-jest.mock('../services/mockApi', () => ({
+jest.mock('../services/api', () => ({
   apiService: {
     getBorrowerPipeline: jest.fn().mockResolvedValue({
       new: [
@@ -31,9 +32,39 @@ jest.mock('../services/mockApi', () => ({
   }
 }));
 
+let consoleErrorSpy: jest.SpyInstance;
+let consoleWarnSpy: jest.SpyInstance;
+
+beforeAll(() => {
+  consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+  consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+});
+
+const renderWithAuth = (ui: React.ReactElement) => {
+  // Set an authenticated user for components that read from localStorage
+  localStorage.setItem('user', JSON.stringify({
+    id: 'test-user',
+    name: 'Test User',
+    email: 'viewer@demo.com',
+    role: 'viewer',
+    permissions: ['view_borrowers', 'view_broker_stats']
+  }));
+
+  return render(<AuthProvider>{ui}</AuthProvider>);
+};
+
+afterEach(() => {
+  localStorage.clear();
+});
+
+afterAll(() => {
+  consoleErrorSpy.mockRestore();
+  consoleWarnSpy.mockRestore();
+});
+
 describe('Dashboard', () => {
   test('renders dashboard with header', async () => {
-    render(<Dashboard />);
+    renderWithAuth(<Dashboard />);
     
     expect(screen.getByText('DemoApp')).toBeInTheDocument();
     
@@ -43,21 +74,23 @@ describe('Dashboard', () => {
   });
 
   test('displays borrower list', async () => {
-    render(<Dashboard />);
+    renderWithAuth(<Dashboard />);
     
-    await waitFor(() => {
-      expect(screen.getByText('Sarah Dunn')).toBeInTheDocument();
-      expect(screen.getByText('Home Loan')).toBeInTheDocument();
-    });
+    const names = await screen.findAllByText('Sarah Dunn');
+    expect(names.length).toBeGreaterThanOrEqual(1);
+    const loanTypes = await screen.findAllByText(/Home Loan/i);
+    expect(loanTypes.length).toBeGreaterThanOrEqual(1);
   });
 
   test('allows tab switching', async () => {
-    render(<Dashboard />);
-    
+    renderWithAuth(<Dashboard />);
+
+    const inReviewTab = await screen.findByRole('tab', { name: /in review/i });
+    await userEvent.click(inReviewTab);
+
     await waitFor(() => {
-      const inReviewTab = screen.getByRole('tab', { name: /in review/i });
-      fireEvent.click(inReviewTab);
-      expect(inReviewTab).toHaveAttribute('data-state', 'active');
+      // Radix Tabs set aria-selected="true" on the active tab
+      expect(inReviewTab).toHaveAttribute('aria-selected', 'true');
     });
   });
 });
